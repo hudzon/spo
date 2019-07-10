@@ -1,6 +1,6 @@
 #header {
     text-align: center;
-    width: 70%;
+    width: 100%;
 }
 
 #graph {
@@ -11,6 +11,6 @@
 }
 
 #content {
-    text-align: left;
-    width: 70%;
+    /*text-align: left;*/
+    /*width: 70%;*/
 }

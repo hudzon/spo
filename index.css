@@ -9,14 +9,14 @@
     display: inline-block;
     width: 600px;
     height: 400px;
-    margin-left: 30px;
+    margin-left: 50%;
 }
 
 .introduction {
     display: inline-block;
-    width: 50%;
-    margin-left: 30px;
-    margin-right: 30px;
+    width: 48%;
+    margin-left: 1%;
+    margin-right: 1%;
 }
 
 .introduction__area {

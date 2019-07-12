@@ -8,6 +8,51 @@
     <body>
         <div class="container">
 	        <div class="content">
+                <div class="graph">
+                    <b>График</b>
+                    <canvas id="chart" width="600" height="400"></canvas>
+                    <script>
+                        let ctx = document.getElementById('chart').getContext('2d');
+                        let chart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: ['0', '15', '30', '45', '60', '75', '90'],
+                                datasets: [{
+                                    label: 'График эффективности учебного занятия',
+                                    fill: false,
+                                    lineTension: 0,
+                                    backgroundColor: 'transparent',
+                                    data: [0, 0.12, 0.19, 0.3, 0.5, 0.72, 0.93],
+                                    borderWidth: 1,
+                                    borderColor: 'red',
+                                    pointBackgroundColor: 'red',
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        },
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Эффективность'
+                                        }
+                                    }],
+                                    xAxes: [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        },
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Время, мин'
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                    </script>
+                </div>
                 <div class="header">
                     <p>ПЛАН</p>
                     <p>проведения <b>практического занятия №4</b></p>
@@ -23,77 +68,77 @@
                             <li>Выработать умения в разработке и оформлении доклада командира подразделения на подведение итогов боевой подготовки.</li>
                             <li>Совершенствовать штабную культуру, навыки четкого, ясного,обоснованного доклада, воспитывать чувство ответственности за разработанные служебные документы.</li>
                         </ol>
-<!--                        <textarea class="introduction__area" rows="10" cols="45" name="text"></textarea>-->
+                        <!--                        <textarea class="introduction__area" rows="10" cols="45" name="text"></textarea>-->
                         <input class="introduction__button" type="submit" value="Изменить">
                     </form>
-                    <table>
+                    <table border="1" cellspacing="0" cellpadding="10" bordercolor="black">
                         <tr>
-                            <td>...</td>
-                            <td>...</td>
-                            <td>...</td>
-                            <td>...</td>
-                            <td>...</td>
-                            <td>...</td>
-                            <td>...</td>
+                            <td>№</td>
+                            <td>Учебные вопросы</td>
+                            <td>Время, мин</td>
+                            <td>Методические приемы</td>
                         </tr>
                         <tr>
-                            <td>...</td>
+                            <td align="center" colspan="4">Вступительная часть</td>
                         </tr>
                         <tr>
-                            <td>...</td>
+
+                        </tr>
+                            <td></td>
+                            <td>
+                                <p>Проверка наличия курсантов на занятии, готовность аудитории</p>
+                                <p>Доведение до курсантов:</p>
+                                <p>  - темы занятия(слайд 1);</p>
+                                <p>  - места занятия в процессе изучения дисциплины(слайд 2, 3);</p>
+                                <p>  - учебной литературы(слайд 4);</p>
+                                <p>  - порядка проведения занятия.</p>
+                            </td>
+                            <td>15</td>
+                            <td>Устное изложение - Показ презентации</td>
+                        <tr>
+                            <td align="center" colspan="4">Основная часть</td>
                         </tr>
                         <tr>
-                            <td>...</td>
+                            <td></td>
+                            <td>Осуществление проверки готовности курсантов к занятию.</td>
+                            <td>15</td>
+                            <td>Устное изложение - Показ презентации</td>
                         </tr>
                         <tr>
-                            <td>...</td>
+                            <td align="center" colspan="4">Учебные вопросы</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Подготовка исходных данных для разработки доклада командира подразделения.</td>
+                            <td>20</td>
+                            <td>Устное изложение - Показ презентации</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Разработка разделов доклада командира подразделения.</td>
+                            <td>30</td>
+                            <td>Устное изложение - Показ презентации</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Разбор разделов доклада командира подразделения.</td>
+                            <td>20</td>
+                            <td>Устное изложение - Показ презентации</td>
+                        </tr>
+                        <tr>
+                            <td align="center" colspan="4">Заключительная часть</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <p>Подведение итоговработы курсантов на практическом занятии.</p>
+                                <p>Выдача задания на самостоятельную работу.</p>
+                            </td>
+                            <td>5</td>
+                            <td>Устное изложение - Показ презентации</td>
                         </tr>
                     </table>
-                </div>
-                <div class="graph">
-                    <b>График</b>
-                    <canvas id="chart" width="600" height="400"></canvas>
-                    <script>
-                      let ctx = document.getElementById('chart').getContext('2d');
-                      let chart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                          labels: ['0', '15', '30', '45', '60', '75', '90'],
-                          datasets: [{
-                            label: 'График эффективности учебного занятия',
-                            fill: false,
-                            lineTension: 0,
-                            backgroundColor: 'transparent',
-                            data: [0, 0.12, 0.19, 0.3, 0.5, 0.72, 0.93],
-                            borderWidth: 1,
-                            borderColor: 'red',
-                            pointBackgroundColor: 'red',
-                          }]
-                        },
-                        options: {
-                          scales: {
-                            yAxes: [{
-                              ticks: {
-                                beginAtZero: true
-                              },
-                              scaleLabel: {
-                                display: true,
-                                labelString: 'Эффективность'
-                              }
-                            }],
-                            xAxes: [{
-                              ticks: {
-                                beginAtZero: true
-                              },
-                              scaleLabel: {
-                                display: true,
-                                labelString: 'Время, мин'
-                              }
-                            }]
-                          }
-                        }
-                      });
-                    </script>
+                    <input class="introduction__button" type="submit" value="Изменить">
                 </div>
 	        </div>
         </div>

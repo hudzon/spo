@@ -23,9 +23,14 @@
     width: 90%;
 }
 
+.introduction__table {
+    width: 100%;
+}
+
 .introduction__button {
     float: right;
     margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .content {

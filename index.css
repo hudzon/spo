@@ -10,6 +10,13 @@
     width: 600px;
     height: 400px;
     margin-left: 50%;
+    margin-top: 50px;
+}
+
+.group_choice {
+    position: fixed;
+    display: inline-block;
+    margin-left: 50%;
 }
 
 .introduction {

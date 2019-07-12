@@ -3,22 +3,69 @@
         <head>
             <title>План занятий</title>
             <link rel="stylesheet" type="text/css" href="style.css">
+            <script src="lib/Chart.bundle.min.js"></script>
         </head>
     <body>
-        <div id="container">
-	        <div id="content">
-                <div id="header">
+        <div class="container">
+	        <div class="content">
+                <div class="header">
                     <p>ПЛАН</p>
                     <p>проведения <b>практического занятия №4</b></p>
                     <p>Учебная дисциплина <b>УПРАВЛЕНИЕ ПОДРАЗДЕЛЕНИЯМИ.</b></p>
                     <p>Тема занятия <b>РАЗРАБОТКА ДОКЛАДА КОМАНДИРА.</b></p>
                 </div>
-                <div id="introduction">
-                    Учебные и воспитательные цели:
-                    <input type="text" size="40">
+                <div class="introduction">
+                    <form>
+                        <p>Учебные и воспитательные цели:</p>
+                        <p></p>
+<!--                        <textarea class="introduction__area" rows="10" cols="45" name="text"></textarea>-->
+                        <input class="introduction__button" type="submit" value="Изменить">
+                    </form>
                 </div>
-                <div id="graph">
+                <div class="graph">
                     График
+                    <canvas id="chart" width="600" height="400"></canvas>
+                    <script>
+                      let ctx = document.getElementById('chart').getContext('2d');
+                      let chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                          labels: ['0', '15', '30', '45', '60', '75', '90'],
+                          datasets: [{
+                            label: 'График эффективности учебного занятия',
+                            fill: false,
+                            lineTension: 0,
+                            backgroundColor: 'transparent',
+                            data: [0, 0.12, 0.19, 0.3, 0.5, 0.72, 0.93],
+                            borderWidth: 1,
+                            borderColor: 'red',
+                            pointBackgroundColor: 'red',
+                          }]
+                        },
+                        options: {
+                          scales: {
+                            yAxes: [{
+                              ticks: {
+                                beginAtZero: true
+                              },
+                              scaleLabel: {
+                                display: true,
+                                labelString: 'Эффективность'
+                              }
+                            }],
+                            xAxes: [{
+                              ticks: {
+                                beginAtZero: true
+                              },
+                              scaleLabel: {
+                                display: true,
+                                labelString: 'Время, мин'
+                              }
+                            }]
+                          }
+                        }
+                      });
+                    </script>
                 </div>
 	        </div>
         </div>

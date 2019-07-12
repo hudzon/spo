@@ -2,7 +2,7 @@
     <html lang="ru">
         <head>
             <title>План занятий</title>
-            <link rel="stylesheet" type="text/css" href="style.css">
+            <link rel="stylesheet" type="text/css" href="index.css">
             <script src="lib/Chart.bundle.min.js"></script>
         </head>
     <body>
@@ -16,14 +16,42 @@
                 </div>
                 <div class="introduction">
                     <form>
-                        <p>Учебные и воспитательные цели:</p>
-                        <p></p>
+                        <b>Учебные и воспитательные цели:</b>
+                        <ol>
+                            <li>Проверить уровень усвоения материала, изложенного в ходе лекционных занятий.</li>
+                            <li>Выработать умения в определении, подготовке и анализе исходных данных для разработки доклада командира подразделения на подведение итогов боевой подготовки.</li>
+                            <li>Выработать умения в разработке и оформлении доклада командира подразделения на подведение итогов боевой подготовки.</li>
+                            <li>Совершенствовать штабную культуру, навыки четкого, ясного,обоснованного доклада, воспитывать чувство ответственности за разработанные служебные документы.</li>
+                        </ol>
 <!--                        <textarea class="introduction__area" rows="10" cols="45" name="text"></textarea>-->
                         <input class="introduction__button" type="submit" value="Изменить">
                     </form>
+                    <table>
+                        <tr>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                        </tr>
+                        <tr>
+                            <td>...</td>
+                        </tr>
+                        <tr>
+                            <td>...</td>
+                        </tr>
+                        <tr>
+                            <td>...</td>
+                        </tr>
+                        <tr>
+                            <td>...</td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="graph">
-                    График
+                    <b>График</b>
                     <canvas id="chart" width="600" height="400"></canvas>
                     <script>
                       let ctx = document.getElementById('chart').getContext('2d');

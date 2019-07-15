@@ -83,7 +83,7 @@
                         <p>Место: 1К421</p>
                         <p>Учебно-материальное обеспечение: УММ, ПЭВМ, проектор, презентация</p>
                         <!--                        <textarea class="introduction__area" rows="10" cols="45" name="text"></textarea>-->
-                        <input class="introduction__button" type="submit" value="Изменить">
+                        <input class="introduction__button" id="learning_objectives" type="button" value="Изменить">
                     </form>
                     <table class="introduction__table" border="1" cellspacing="0" cellpadding="5" bordercolor="black">
                         <tr>
@@ -152,8 +152,34 @@
                             <td>Устное изложение - Показ презентации</td>
                         </tr>
                     </table>
-                    <input class="introduction__button" type="submit" value="Изменить">
+                    <input class="introduction__button" id="learning_questions" type="button" value="Изменить">
                 </div>
+
+                <div id="learning_questions_modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>Some text in the Modal..</p>
+                    </div>
+                </div>
+                <script>
+                  let modal = document.getElementById("learning_questions_modal");
+                  let btn = document.getElementById("learning_questions");
+                  let span = document.getElementsByClassName("close")[0];
+
+                  btn.onclick = function() {
+                    modal.style.display = "block";
+                  };
+
+                  span.onclick = function() {
+                    modal.style.display = "none";
+                  };
+
+                  window.onclick = function(event) {
+                    if (event.target === modal) {
+                      modal.style.display = "none";
+                    }
+                  }
+                </script>
 
                 <div id="learning_objectives_modal" class="modal">
                     <div class="modal-content">

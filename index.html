@@ -155,56 +155,62 @@
                     <input class="introduction__button" id="learning_questions" type="button" value="Изменить">
                 </div>
 
-                <div id="learning_questions_modal" class="modal">
+                <div id="learning_objectives_modal" class="modal">
                     <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <p>Some text in the Modal..</p>
+                        <span id="close_objectives_modal" class="close">&times;</span>
+                        <b>Учебные и воспитательные цели:</b>
+                        <textarea name="comment" cols="40" rows="3"></textarea>
+                        <p>Время: <input type="text"></p>
+                        <p>Место: <input type="text"></p>
+                        <p>Учебно-материальное обеспечение:</p>
+                        <input type="text">
+                        <input class="modal__button" type="button" value="Сохранить">
                     </div>
                 </div>
                 <script>
-                  let modal = document.getElementById("learning_questions_modal");
-                  let btn = document.getElementById("learning_questions");
-                  let span = document.getElementsByClassName("close")[0];
+                  let objectives_modal = document.getElementById("learning_objectives_modal");
+                  let objectives_btn = document.getElementById("learning_objectives");
+                  let objectives_span = document.getElementById("close_objectives_modal");
 
-                  btn.onclick = function() {
-                    modal.style.display = "block";
+                  objectives_btn.onclick = function() {
+                      objectives_modal.style.display = "block";
                   };
 
-                  span.onclick = function() {
-                    modal.style.display = "none";
+                  objectives_span.onclick = function() {
+                      objectives_modal.style.display = "none";
                   };
 
                   window.onclick = function(event) {
-                    if (event.target === modal) {
-                      modal.style.display = "none";
+                    if (event.target === objectives_modal) {
+                        objectives_modal.style.display = "none";
                     }
                   }
                 </script>
 
-                <div id="learning_objectives_modal" class="modal">
+                <div id="learning_questions_modal" class="modal">
                     <div class="modal-content">
-                        <span class="close">&times;</span>
+                        <span id="close_question_modal" class="close">&times;</span>
                         <p>Some text in the Modal..</p>
                     </div>
                 </div>
                 <script>
-                  let modal = document.getElementById("learning_objectives_modal");
-                  let btn = document.getElementById("learning_objectives");
-                  let span = document.getElementsByClassName("close")[0];
+                    let learning_modal = document.getElementById("learning_questions_modal");
+                    let learning_btn = document.getElementById("learning_questions");
+                    let learning_span = document.getElementById("close_question_modal");
 
-                  btn.onclick = function() {
-                    modal.style.display = "block";
-                  };
+                    learning_btn.onclick = function() {
+                        learning_modal.style.display = "block";
+                    };
 
-                  span.onclick = function() {
-                    modal.style.display = "none";
-                  };
+                    learning_span.onclick = function() {
+                        learning_modal.style.display = "none";
+                    };
 
-                  window.onclick = function(event) {
-                    if (event.target === modal) {
-                      modal.style.display = "none";
+                    window.onclick = function(event) {
+                        if (event.target === learning_modal) {
+                            learning_modal.style.display = "none";
+                        }
                     }
-                  }
                 </script>
 	        </div>
         </div>

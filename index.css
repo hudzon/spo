@@ -66,6 +66,10 @@
     width: 80%;
 }
 
+.modal__button {
+    float: right;
+}
+
 .close {
     color: #aaaaaa;
     float: right;

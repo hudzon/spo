@@ -83,3 +83,8 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.modal__objectives__area {
+    min-width: 100%;
+    margin: auto;
+}

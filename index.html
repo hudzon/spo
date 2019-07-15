@@ -159,7 +159,7 @@
                     <div class="modal-content">
                         <span id="close_objectives_modal" class="close">&times;</span>
                         <b>Учебные и воспитательные цели:</b>
-                        <textarea name="comment" cols="40" rows="3"></textarea>
+                        <textarea class="modal__objectives__area" name="comment" cols="40" rows="3"></textarea>
                         <p>Время: <input type="text"></p>
                         <p>Место: <input type="text"></p>
                         <p>Учебно-материальное обеспечение:</p>
@@ -179,12 +179,6 @@
                   objectives_span.onclick = function() {
                       objectives_modal.style.display = "none";
                   };
-
-                  window.onclick = function(event) {
-                    if (event.target === objectives_modal) {
-                        objectives_modal.style.display = "none";
-                    }
-                  }
                 </script>
 
                 <div id="learning_questions_modal" class="modal">
@@ -205,12 +199,6 @@
                     learning_span.onclick = function() {
                         learning_modal.style.display = "none";
                     };
-
-                    window.onclick = function(event) {
-                        if (event.target === learning_modal) {
-                            learning_modal.style.display = "none";
-                        }
-                    }
                 </script>
 	        </div>
         </div>

@@ -71,20 +71,26 @@
                     <p>Тема занятия <b>РАЗРАБОТКА ДОКЛАДА КОМАНДИРА.</b></p>
                 </div>
                 <div class="introduction">
-                    <form>
-                        <b>Учебные и воспитательные цели:</b>
-                        <ol>
-                            <li>Проверить уровень усвоения материала, изложенного в ходе лекционных занятий.</li>
-                            <li>Выработать умения в определении, подготовке и анализе исходных данных для разработки доклада командира подразделения на подведение итогов боевой подготовки.</li>
-                            <li>Выработать умения в разработке и оформлении доклада командира подразделения на подведение итогов боевой подготовки.</li>
-                            <li>Совершенствовать штабную культуру, навыки четкого, ясного,обоснованного доклада, воспитывать чувство ответственности за разработанные служебные документы.</li>
-                        </ol>
-                        <p>Время: 90 мин</p>
-                        <p>Место: 1К421</p>
-                        <p>Учебно-материальное обеспечение: УММ, ПЭВМ, проектор, презентация</p>
-                        <!--                        <textarea class="introduction__area" rows="10" cols="45" name="text"></textarea>-->
-                        <input class="introduction__button" id="learning_objectives" type="button" value="Изменить">
-                    </form>
+                    <?php
+                        $cur_lesson_id = 1;
+                        $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
+                        $dbconnect = pg_connect($connect_string);
+                        if($dbconnect)
+                            $query = "select * from LessonsPlan where Id=$cur_lesson_id;";
+                            $result = pg_query($dbconnect, $query);
+                            if (!$result) {
+                                echo "Произошла ошибка.\n";
+                            }
+                            $result_object = pg_fetch_row($result);
+                            pg_close($dbconnect);
+                            echo '<b>Учебные и воспитательные цели:</b>';
+                            echo '<p style="white-space: pre-line">'.$result_object[1].'</p>';
+                            echo '<p>Время: '.$result_object[2].' мин</p>';
+                            echo '<p>Место: '.$result_object[3].'</p>';
+                            echo '<p>Учебно-материальное обеспечение: '.$result_object[4].'</p>';
+                    ?>
+                    <input class="introduction__button" id="learning_objectives" type="button" value="Изменить">
+
                     <table class="introduction__table" border="1" cellspacing="0" cellpadding="5" bordercolor="black">
                         <tr>
                             <td align="center"><b>№</b></td>

@@ -1,4 +1,18 @@
 <!DOCTYPE html>
+    <?php
+        <!-- TODO: брать id из запроса на эту страницу-->
+        $cur_lesson_id = 1;
+        if(isset($_POST['objectives_button'])) {
+            $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
+            $dbconnect = pg_connect($connect_string);
+            if($dbconnect)
+                $query = "update LessonsPlan set (Targets, Total_time, Place, Provision) = ('".
+                         $_POST['targets']."', ".$_POST['total_time'].", '".$_POST['place']."', '".
+                         $_POST['provision']."') where Id=$cur_lesson_id;";
+                $result = pg_query($dbconnect, $query);
+                pg_close($dbconnect);
+        }
+    ?>
     <html lang="ru">
         <head>
             <title>План занятий</title>
@@ -72,8 +86,6 @@
                 </div>
                 <div class="introduction">
                     <?php
-                        <!-- TODO: брать id из запроса на эту страницу-->
-                        $cur_lesson_id = 1;
                         $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
                         $dbconnect = pg_connect($connect_string);
                         if($dbconnect)
@@ -173,16 +185,6 @@
                                 echo '<p>Место: <input type="text" name="place" value="'.$result_object[3].'"></p>';
                                 echo '<p>Учебно-материальное обеспечение:</p>';
                                 echo '<input type="text" name="provision" value="'.$result_object[4].'">';
-                                if(isset($_POST['objectives_button'])) {
-                                    $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
-                                    $dbconnect = pg_connect($connect_string);
-                                    if($dbconnect)
-                                        $query = "update LessonsPlan set (Targets, Total_time, Place, Provision) = ('".
-                                                 $_POST['targets']."', ".$_POST['total_time'].", '".$_POST['place']."', '".
-                                                 $_POST['provision']."') where Id=$cur_lesson_id;";
-                                        $result = pg_query($dbconnect, $query);
-                                        pg_close($dbconnect);
-                                }
                             ?>
                             <input class="modal__button" name="objectives_button" type="submit" value="Сохранить">
                         </form>

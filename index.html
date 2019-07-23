@@ -72,6 +72,7 @@
                 </div>
                 <div class="introduction">
                     <?php
+                        <!-- TODO: брать id из запроса на эту страницу-->
                         $cur_lesson_id = 1;
                         $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
                         $dbconnect = pg_connect($connect_string);

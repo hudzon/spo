@@ -165,27 +165,26 @@
                 <div id="learning_objectives_modal" class="modal">
                     <div class="modal-content">
                         <form method="post">
-                            <span id="close_objectives_modal" class="close">&times;</span>
-                            <b>Учебные и воспитательные цели:</b>
-                            <textarea class="modal__objectives__area" name="targets" cols="40" rows="3"></textarea>
-                            <p>Время: <input type="text" name="total_time"></p>
-                            <p>Место: <input type="text" name="place"></p>
-                            <p>Учебно-материальное обеспечение:</p>
-                            <input type="text" name="provision">
-                            <input class="modal__button" name="objectives_button" type="submit" value="Сохранить">
                             <?php
+                                echo '<span id="close_objectives_modal" class="close">&times;</span>';
+                                echo '<b>Учебные и воспитательные цели:</b>';
+                                echo '<textarea class="modal__objectives__area" name="targets" cols="40" rows="3">'.$result_object[1].'</textarea>';
+                                echo '<p>Время: <input type="text" name="total_time" value="'.$result_object[2].'"></p>';
+                                echo '<p>Место: <input type="text" name="place" value="'.$result_object[3].'"></p>';
+                                echo '<p>Учебно-материальное обеспечение:</p>';
+                                echo '<input type="text" name="provision" value="'.$result_object[4].'">';
                                 if(isset($_POST['objectives_button'])) {
                                     $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
                                     $dbconnect = pg_connect($connect_string);
                                     if($dbconnect)
-                                    $query = "INSERT INTO LessonsPlan VALUES (1".
+                                        $query = "INSERT INTO LessonsPlan VALUES ($cur_lesson_id".
                                              ", '".$_POST['targets']."', ".$_POST['total_time'].", '".
                                              $_POST['place']."', '".$_POST['provision']."');";
-                                    $result = pg_query($dbconnect, $query);
-                                    echo $result;
-                                    pg_close($dbconnect);
-                                    }
+                                        $result = pg_query($dbconnect, $query);
+                                        pg_close($dbconnect);
+                                }
                             ?>
+                            <input class="modal__button" name="objectives_button" type="submit" value="Сохранить">
                         </form>
                     </div>
                 </div>

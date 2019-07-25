@@ -30,6 +30,13 @@
                 $result = pg_query($dbconnect, $query);
             }
 
+            // получаем данные об учебных вопросах
+            $query = "select * from Questions where LessonForGroupId=$group_for_lesson order by Number;";
+            $questions = pg_query($dbconnect, $query);
+            if (!$questions) {
+                echo "Произошла ошибка.\n";
+            }
+
             pg_close($dbconnect);
         }
     ?>
@@ -160,24 +167,16 @@
                         <tr>
                             <td align="center" colspan="4"><b>Учебные вопросы</b></td>
                         </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Подготовка исходных данных для разработки доклада командира подразделения.</td>
-                            <td align="center">20</td>
-                            <td>Устное изложение - Показ презентации</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Разработка разделов доклада командира подразделения.</td>
-                            <td align="center">30</td>
-                            <td>Устное изложение - Показ презентации</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Разбор разделов доклада командира подразделения.</td>
-                            <td align="center">20</td>
-                            <td>Устное изложение - Показ презентации</td>
-                        </tr>
+                        <?php
+                            foreach (pg_fetch_all($questions) as $question) {
+                                echo '<tr>';
+                                echo '    <td align="center">'.$question['number'].'</td>';
+                                echo '    <td>'.$question['content'].'</td>';
+                                echo '    <td align="center">'.$question['time'].'</td>';
+                                echo '    <td>'.$question['methods'].'</td>';
+                                echo '</tr>';
+                            }
+                        ?>
                         <tr>
                             <td align="center" colspan="4"><b>Заключительная часть</b></td>
                         </tr>
@@ -264,12 +263,16 @@
                                 <tr>
                                     <td align="center" colspan="4"><b>Учебные вопросы</b></td>
                                 </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td><textarea class="modal__objectives__area" name="question" cols="40" rows="3"></textarea></td>
-                                    <td align="center" contenteditable="true"><input type="text" name="question_time"/></td>
-                                    <td>Устное изложение - Показ презентации</td>
-                                </tr>
+                                <?php
+                                    foreach (pg_fetch_all($questions) as $question) {
+                                        echo '<tr>';
+                                        echo '    <td align="center">'.$question['number'].'</td>';
+                                        echo '    <td><textarea name="question[]">'.$question['content'].'</textarea></td>';
+                                        echo '    <td align="center"><input type="text" name="question_time[]" value="'.$question['time'].'"/></td>';
+                                        echo '    <td>'.$question['methods'].'</td>';
+                                        echo '</tr>';
+                                    }
+                                ?>
                                 <tr>
                                     <td align="center" colspan="4"><b>Заключительная часть</b></td>
                                 </tr>

@@ -1,16 +1,36 @@
 <!DOCTYPE html>
     <?php
-        <!-- TODO: брать id из запроса на эту страницу-->
+        //TODO: брать id из запроса на эту страницу
         $cur_lesson_id = 1;
-        if(isset($_POST['objectives_button'])) {
-            $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
-            $dbconnect = pg_connect($connect_string);
-            if($dbconnect)
+        $cur_group = "241";
+
+        $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
+        $dbconnect = pg_connect($connect_string);
+        if($dbconnect) {
+            $group_for_lesson = pg_query($dbconnect, "select Id from LessonForGroup where LessonId=$cur_lesson_id and EducGroup='$cur_group';");
+            // Для сохранения вступления
+            if(isset($_POST['objectives_button'])) {
                 $query = "update LessonsPlan set (Targets, Total_time, Place, Provision) = ('".
                          $_POST['targets']."', ".$_POST['total_time'].", '".$_POST['place']."', '".
                          $_POST['provision']."') where Id=$cur_lesson_id;";
                 $result = pg_query($dbconnect, $query);
-                pg_close($dbconnect);
+            }
+
+            // Для сохранения таблицы
+            if(isset($_POST['questions_button'])) {
+                // Удаляем старые вопросы
+                $query = "delete from Questions where LessonForGroupId=$group_for_lesson;";
+                $result = pg_query($dbconnect, $query);
+                // Добавляем новые вопросы
+                $values = array();
+                for ($x=0; $x<count($_POST['question']); $x++) {
+                    array_push($values, "($group_for_lesson, ".($x + 1).", ".$_POST['question_time'][$x].", '".$_POST['question'][$x]."', 'Устное изложение - Показ презентации')");
+                }
+                $query = "insert into Questions (LessonForGroupId, Number, Time, Content, Methods) values ".implode(', ', $values).";";
+                $result = pg_query($dbconnect, $query);
+            }
+
+            pg_close($dbconnect);
         }
     ?>
     <html lang="ru">
@@ -206,75 +226,65 @@
 
                 <div id="learning_questions_modal" class="modal">
                     <div class="modal-content">
-                        <span id="close_question_modal" class="close">&times;</span>
-                        <table class="introduction__table" border="1" cellspacing="0" cellpadding="5" bordercolor="black">
-                            <tr>
-                                <td align="center"><b>№</b></td>
-                                <td align="center"><b>Учебные вопросы</b></td>
-                                <td align="center"><b>Время, мин</b></td>
-                                <td align="center"><b>Методические приемы</b></td>
-                            </tr>
-                            <tr>
-                                <td align="center" colspan="4"><b>Вступительная часть</b></td>
-                            </tr>
-                            <tr>
+                        <form method="post">
+                            <span id="close_question_modal" class="close">&times;</span>
+                            <table class="introduction__table" border="1" cellspacing="0" cellpadding="5" bordercolor="black">
+                                <tr>
+                                    <td align="center"><b>№</b></td>
+                                    <td align="center"><b>Учебные вопросы</b></td>
+                                    <td align="center"><b>Время, мин</b></td>
+                                    <td align="center"><b>Методические приемы</b></td>
+                                </tr>
+                                <tr>
+                                    <td align="center" colspan="4"><b>Вступительная часть</b></td>
+                                </tr>
+                                <tr>
 
-                            </tr>
-                            <td></td>
-                            <td>
-                                <p>Проверка наличия курсантов на занятии, готовность аудитории</p>
-                                <p>Доведение до курсантов:</p>
-                                <p>  - темы занятия(слайд 1);</p>
-                                <p>  - места занятия в процессе изучения дисциплины(слайд 2, 3);</p>
-                                <p>  - учебной литературы(слайд 4);</p>
-                                <p>  - порядка проведения занятия.</p>
-                            </td>
-                            <td align="center">15</td>
-                            <td>Устное изложение - Показ презентации</td>
-                            <tr>
-                                <td align="center" colspan="4"><b>Основная часть</b></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>Осуществление проверки готовности курсантов к занятию.</td>
-                                <td align="center" contenteditable="true">15</td>
-                                <td>Устное изложение - Показ презентации</td>
-                            </tr>
-                            <tr>
-                                <td align="center" colspan="4"><b>Учебные вопросы</b></td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td contenteditable="true">Подготовка исходных данных для разработки доклада командира подразделения.</td>
-                                <td align="center" contenteditable="true">20</td>
-                                <td>Устное изложение - Показ презентации</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td contenteditable="true">Разработка разделов доклада командира подразделения.</td>
-                                <td align="center" contenteditable="true">30</td>
-                                <td>Устное изложение - Показ презентации</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td contenteditable="true">Разбор разделов доклада командира подразделения.</td>
-                                <td align="center" contenteditable="true">20</td>
-                                <td>Устное изложение - Показ презентации</td>
-                            </tr>
-                            <tr>
-                                <td align="center" colspan="4"><b>Заключительная часть</b></td>
-                            </tr>
-                            <tr>
+                                </tr>
                                 <td></td>
                                 <td>
-                                    <p>Подведение итогов работы курсантов на практическом занятии.</p>
-                                    <p>Выдача задания на самостоятельную работу.</p>
+                                    <p>Проверка наличия курсантов на занятии, готовность аудитории</p>
+                                    <p>Доведение до курсантов:</p>
+                                    <p>  - темы занятия(слайд 1);</p>
+                                    <p>  - места занятия в процессе изучения дисциплины(слайд 2, 3);</p>
+                                    <p>  - учебной литературы(слайд 4);</p>
+                                    <p>  - порядка проведения занятия.</p>
                                 </td>
-                                <td align="center">5</td>
+                                <td align="center">15</td>
                                 <td>Устное изложение - Показ презентации</td>
-                            </tr>
-                        </table>
-                        <input class="modal__button" type="button" value="Сохранить">
+                                <tr>
+                                    <td align="center" colspan="4"><b>Основная часть</b></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Осуществление проверки готовности курсантов к занятию.</td>
+                                    <td align="center" contenteditable="true">15</td>
+                                    <td>Устное изложение - Показ презентации</td>
+                                </tr>
+                                <tr>
+                                    <td align="center" colspan="4"><b>Учебные вопросы</b></td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td><textarea class="modal__objectives__area" name="question" cols="40" rows="3"></textarea></td>
+                                    <td align="center" contenteditable="true"><input type="text" name="question_time"/></td>
+                                    <td>Устное изложение - Показ презентации</td>
+                                </tr>
+                                <tr>
+                                    <td align="center" colspan="4"><b>Заключительная часть</b></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <p>Подведение итогов работы курсантов на практическом занятии.</p>
+                                        <p>Выдача задания на самостоятельную работу.</p>
+                                    </td>
+                                    <td align="center">5</td>
+                                    <td>Устное изложение - Показ презентации</td>
+                                </tr>
+                            </table>
+                            <input class="modal__button" name="questions_button" type="button" value="Сохранить">
+                        </form>
                     </div>
                 </div>
                 <script>

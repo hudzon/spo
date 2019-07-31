@@ -1,71 +1,69 @@
 <!DOCTYPE html>
-    <?php
-        //TODO: брать id из запроса на эту страницу
-        $cur_lesson_id = 1;
-        $cur_group = "241";
+<?php
+    $cur_lesson_id = 1;
+    $cur_group = $_GET['group'];
+    $all_groups = array("241", "242", "243", "244", "245");
 
-        $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
-        $dbconnect = pg_connect($connect_string);
-        if($dbconnect) {
-            $group_for_lesson = pg_query($dbconnect, "select Id from LessonForGroup where LessonId=$cur_lesson_id and EducGroup='$cur_group';");
-            // Для сохранения вступления
-            if(isset($_POST['objectives_button'])) {
-                $query = "update LessonsPlan set (Targets, Total_time, Place, Provision) = ('".
-                         $_POST['targets']."', ".$_POST['total_time'].", '".$_POST['place']."', '".
-                         $_POST['provision']."') where Id=$cur_lesson_id;";
-                $result = pg_query($dbconnect, $query);
-            }
+    $connect_string = "host=localhost port=5432 dbname=olap_mvp user=manerkin.v.p password=1";
+    $dbconnect = pg_connect($connect_string);
+    if($dbconnect) {
+        $group_for_lesson = pg_fetch_row(pg_query($dbconnect, "select * from LessonForGroup where LessonId=$cur_lesson_id and EducGroup='$cur_group';"));
+        $lesson_efficiency = $group_for_lesson[3];
 
-            // Для сохранения таблицы
-            if(isset($_POST['questions_button'])) {
-                // Удаляем старые вопросы
-                $query = "delete from Questions where LessonForGroupId=$group_for_lesson;";
-                $result = pg_query($dbconnect, $query);
-                // Добавляем новые вопросы
-                $values = array();
-                for ($x=0; $x<count($_POST['question']); $x++) {
-                    array_push($values, "($group_for_lesson, ".($x + 1).", ".$_POST['question_time'][$x].", '".$_POST['question'][$x]."', 'Устное изложение - Показ презентации')");
-                }
-                $query = "insert into Questions (LessonForGroupId, Number, Time, Content, Methods) values ".implode(', ', $values).";";
-                $result = pg_query($dbconnect, $query);
-            }
-
-            // получаем данные об учебных вопросах
-            $query = "select * from Questions where LessonForGroupId=$group_for_lesson order by Number;";
-            $questions = pg_query($dbconnect, $query);
-            if (!$questions) {
-                echo "Произошла ошибка.\n";
-            }
-
-            // получаем данные о занятии
-            $query = "select * from LessonsPlan where Id=$cur_lesson_id;";
+        // обновить данные о занятии
+        if(isset($_POST['objectives_button'])) {
+            $query = "update LessonsPlan set (Targets, Total_time, Place, Provision) = ('".
+                     $_POST['targets']."', ".$_POST['total_time'].", '".$_POST['place']."', '".
+                     $_POST['provision']."') where Id=$cur_lesson_id;";
             $result = pg_query($dbconnect, $query);
-            if (!$result) {
-                echo "Произошла ошибка.\n";
-            }
-            $lesson_info = pg_fetch_row($result);
-
-            pg_close($dbconnect);
         }
-    ?>
-    <html lang="ru">
-        <head>
-            <title>План занятий</title>
-            <link rel="stylesheet" type="text/css" href="index.css">
-            <script src="lib/Chart.bundle.min.js"></script>
-        </head>
+
+        // обновить данные учебных вопросов
+        if(isset($_POST['questions_button'])) {
+            $query = "delete from Questions where LessonForGroupId=".$group_for_lesson[0].";";
+            $result = pg_query($dbconnect, $query);
+            // Добавляем новые вопросы
+            $values = array();
+            for ($x=0; $x < count($_POST['question']); $x++) {
+                array_push($values, "(".$group_for_lesson[0].", ".($x + 1).", ".$_POST['question_time'][$x].", '".$_POST['question'][$x]."', 'Устное изложение - Показ презентации')");
+            }
+            $query = "insert into Questions (LessonForGroupId, Number, Time, Content, Methods) values ".implode(', ', $values).";";
+            $result = pg_query($dbconnect, $query);
+        }
+
+        // получаем данные об учебных вопросах
+        $query = "select * from Questions where LessonForGroupId=".$group_for_lesson[0]." order by Number;";
+        $questions = pg_query($dbconnect, $query);
+
+        // получаем данные о занятии
+        $query = "select * from LessonsPlan where Id=$cur_lesson_id;";
+        $result = pg_query($dbconnect, $query);
+        $lesson_info = pg_fetch_row($result);
+
+        pg_close($dbconnect);
+    }
+?>
+<html lang="ru">
+    <head>
+        <title>План занятий</title>
+        <link rel="stylesheet" type="text/css" href="index.css">
+        <script src="lib/Chart.bundle.min.js"></script>
+    </head>
     <body>
         <div class="container">
-	        <div class="content">
+            <div class="content">
                 <div class="group_choice">
-                    <form>
-                        <p><select name="groups">
+                    <form id="group_select" method="get" >
+                        <p><select name="group" onchange="document.getElementById('group_select').submit()">
                             <option>Выберите группу</option>
-                            <option>Группа 241</option>
-                            <option>Группа 242</option>
-                            <option>Группа 243</option>
-                            <option>Группа 244</option>
-                            <option>Группа 245</option>
+                            <?php
+                                foreach($all_groups as $group)
+                                    if($cur_group == $group){
+                                        echo "<option value='$group' selected>Группа $group</option>";
+                                } else {
+                                    echo "<option value='$group'>Группа $group</option>";
+                                }
+                            ?>
                         </select></p>
                     </form>
                 </div>
@@ -74,15 +72,28 @@
                     <script>
                         let ctx = document.getElementById('chart').getContext('2d');
                         let chart = new Chart(ctx, {
-                            type: 'line',
+                            type: 'scatter',
                             data: {
-                                labels: ['0', '15', '30', '45', '60', '75', '90'],
                                 datasets: [{
+                                    showLine: true,
                                     label: 'График эффективности учебного занятия',
                                     fill: false,
                                     lineTension: 0,
                                     backgroundColor: 'transparent',
-                                    data: [0, 0.12, 0.19, 0.3, 0.5, 0.72, 0.93],
+                                    data: [
+                                        <?php
+                                            echo "{x: 0,";
+                                            echo "y: $lesson_efficiency},";
+                                            $used_time = 0;
+                                            foreach (pg_fetch_all($questions) as $question) {
+                                                $used_time += $question['time'];
+                                                // TODO: эффетивность брать в зависимости от метода обучения
+                                                $lesson_efficiency += rand(0, 200) / 1000;
+                                                echo "{x: $used_time,";
+                                                echo "y: $lesson_efficiency},";
+                                            }
+                                        ?>
+                                    ],
                                     borderWidth: 1,
                                     borderColor: 'red',
                                     pointBackgroundColor: 'red',
@@ -92,7 +103,8 @@
                                 scales: {
                                     yAxes: [{
                                         ticks: {
-                                            beginAtZero: true
+                                            min: 0,
+                                            max: 1
                                         },
                                         scaleLabel: {
                                             display: true,
@@ -101,7 +113,8 @@
                                     }],
                                     xAxes: [{
                                         ticks: {
-                                            beginAtZero: true
+                                            min: 0,
+                                            max: <?php echo $lesson_info[2]; ?>
                                         },
                                         scaleLabel: {
                                             display: true,
@@ -122,10 +135,10 @@
                 <div class="introduction">
                     <?php
                         echo '<b>Учебные и воспитательные цели:</b>';
-                        echo '<p style="white-space: pre-line">'.$result_object[1].'</p>';
-                        echo '<p>Время: '.$result_object[2].' мин</p>';
-                        echo '<p>Место: '.$result_object[3].'</p>';
-                        echo '<p>Учебно-материальное обеспечение: '.$result_object[4].'</p>';
+                        echo '<p style="white-space: pre-line">'.$lesson_info[1].'</p>';
+                        echo '<p>Время: '.$lesson_info[2].' мин</p>';
+                        echo '<p>Место: '.$lesson_info[3].'</p>';
+                        echo '<p>Учебно-материальное обеспечение: '.$lesson_info[4].'</p>';
                     ?>
                     <input class="introduction__button" id="learning_objectives" type="button" value="Изменить">
 
@@ -140,8 +153,6 @@
                             <td align="center" colspan="4"><b>Вступительная часть</b></td>
                         </tr>
                         <tr>
-
-                        </tr>
                             <td></td>
                             <td>
                                 <p>Проверка наличия курсантов на занятии, готовность аудитории</p>
@@ -153,6 +164,7 @@
                             </td>
                             <td align="center">15</td>
                             <td>Устное изложение - Показ презентации</td>
+                        </tr>
                         <tr>
                             <td align="center" colspan="4"><b>Основная часть</b></td>
                         </tr>
@@ -165,16 +177,16 @@
                         <tr>
                             <td align="center" colspan="4"><b>Учебные вопросы</b></td>
                         </tr>
-                        <?php
-                            foreach (pg_fetch_all($questions) as $question) {
-                                echo '<tr>';
-                                echo '    <td align="center">'.$question['number'].'</td>';
-                                echo '    <td>'.$question['content'].'</td>';
-                                echo '    <td align="center">'.$question['time'].'</td>';
-                                echo '    <td>'.$question['methods'].'</td>';
-                                echo '</tr>';
-                            }
-                        ?>
+                            <?php
+                                foreach (pg_fetch_all($questions) as $question) {
+                                    echo '<tr>';
+                                    echo '    <td align="center">'.$question['number'].'</td>';
+                                    echo '    <td>'.$question['content'].'</td>';
+                                    echo '    <td align="center">'.$question['time'].'</td>';
+                                    echo '    <td>'.$question['methods'].'</td>';
+                                    echo '</tr>';
+                                }
+                            ?>
                         <tr>
                             <td align="center" colspan="4"><b>Заключительная часть</b></td>
                         </tr>
@@ -225,7 +237,7 @@
                     <div class="modal-content">
                         <form method="post">
                             <span id="close_question_modal" class="close">&times;</span>
-                            <table class="introduction__table" border="1" cellspacing="0" cellpadding="5" bordercolor="black">
+                            <table id="edit_table" class="introduction__table" border="1" cellspacing="0" cellpadding="5" bordercolor="black">
                                 <tr>
                                     <td align="center"><b>№</b></td>
                                     <td align="center"><b>Учебные вопросы</b></td>
@@ -236,26 +248,25 @@
                                     <td align="center" colspan="4"><b>Вступительная часть</b></td>
                                 </tr>
                                 <tr>
-
+                                    <td></td>
+                                    <td>
+                                        <p>Проверка наличия курсантов на занятии, готовность аудитории</p>
+                                        <p>Доведение до курсантов:</p>
+                                        <p>  - темы занятия(слайд 1);</p>
+                                        <p>  - места занятия в процессе изучения дисциплины(слайд 2, 3);</p>
+                                        <p>  - учебной литературы(слайд 4);</p>
+                                        <p>  - порядка проведения занятия.</p>
+                                    </td>
+                                    <td align="center">15</td>
+                                    <td>Устное изложение - Показ презентации</td>
                                 </tr>
-                                <td></td>
-                                <td>
-                                    <p>Проверка наличия курсантов на занятии, готовность аудитории</p>
-                                    <p>Доведение до курсантов:</p>
-                                    <p>  - темы занятия(слайд 1);</p>
-                                    <p>  - места занятия в процессе изучения дисциплины(слайд 2, 3);</p>
-                                    <p>  - учебной литературы(слайд 4);</p>
-                                    <p>  - порядка проведения занятия.</p>
-                                </td>
-                                <td align="center">15</td>
-                                <td>Устное изложение - Показ презентации</td>
                                 <tr>
                                     <td align="center" colspan="4"><b>Основная часть</b></td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td>Осуществление проверки готовности курсантов к занятию.</td>
-                                    <td align="center" contenteditable="true">15</td>
+                                    <td align="center">15</td>
                                     <td>Устное изложение - Показ презентации</td>
                                 </tr>
                                 <tr>
@@ -264,13 +275,18 @@
                                 <?php
                                     foreach (pg_fetch_all($questions) as $question) {
                                         echo '<tr>';
-                                        echo '    <td align="center">'.$question['number'].'</td>';
+                                        echo '    <td align="center">'.$question['number'].'<br><input type="button" value="-" onclick="deleteRow(this)"></td>';
                                         echo '    <td><textarea name="question[]">'.$question['content'].'</textarea></td>';
                                         echo '    <td align="center"><input type="text" name="question_time[]" value="'.$question['time'].'"/></td>';
                                         echo '    <td>'.$question['methods'].'</td>';
                                         echo '</tr>';
                                     }
                                 ?>
+                                <tr>
+                                    <td align="center" colspan="4">
+                                        <input onclick="addRow(this)" name="questions_button" type="button" value="Добавить вопрос">
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td align="center" colspan="4"><b>Заключительная часть</b></td>
                                 </tr>
@@ -284,7 +300,33 @@
                                     <td>Устное изложение - Показ презентации</td>
                                 </tr>
                             </table>
-                            <input class="modal__button" name="questions_button" type="button" value="Сохранить">
+                            <input class="modal__button__save" name="questions_button" type="submit" value="Сохранить">
+                            <script>
+                                function addRow(r) {
+                                    var i = r.parentNode.parentNode.rowIndex;
+                                    var questions_number = i - 5;
+
+                                    var table = document.getElementById("edit_table");
+                                    var row = table.insertRow(i);
+                                    var cell1 = row.insertCell(0);
+                                    var cell2 = row.insertCell(1);
+                                    var cell3 = row.insertCell(2);
+                                    var cell4 = row.insertCell(3);
+                                    cell1.innerHTML = "<p align='center'>".concat(questions_number, "</p><input type='button' value='-' onclick='deleteRow(this)'>");
+                                    cell2.innerHTML = "<textarea name='question[]'></textarea>";
+                                    cell3.innerHTML = "<input type='text' name='question_time[]'/>";
+                                    cell4.innerHTML = "Устное изложение - Показ презентации";
+                                }
+
+                                function deleteRow(r) {
+                                    var i = r.parentNode.parentNode.rowIndex;
+                                    var table = document.getElementById("edit_table");
+                                    table.deleteRow(i);
+                                    for (var index = 6; index < table.rows.length - 3; index++) {
+                                        table.rows[index].cells[0].innerHTML = "<p align='center'>".concat(index - 5, "</p><input type='button' value='-' onclick='deleteRow(this)'>");
+                                    }
+                                }
+                            </script>
                         </form>
                     </div>
                 </div>
@@ -301,9 +343,9 @@
                         learning_modal.style.display = "none";
                     };
                 </script>
-	        </div>
+            </div>
         </div>
-	</div>
-</div>
-</body>
+        </div>
+        </div>
+    </body>
 </html>
